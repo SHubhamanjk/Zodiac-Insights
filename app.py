@@ -2,8 +2,7 @@ from flask import Flask, request, render_template
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import os
-import fcntl
+from utils import *
 
 app = Flask(__name__)
 
@@ -25,6 +24,12 @@ def get_horoscope(zodiac_sign, month, day, year):
     
     return "Horoscope for the given zodiac sign not found."
 
+
+@app.route('/')
+def home():
+    return render_template('index.html',chat_history=chat_history)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def horoscope():
     horoscope_text = ""
@@ -36,8 +41,32 @@ def horoscope():
         user_year = date_obj.strftime('%Y').lower()
         user_horoscope = request.form['horoscope'].lower()
         horoscope_text = get_horoscope(user_horoscope, user_month, user_day, user_year)
-    return render_template('index.html', horoscope_text=horoscope_text)
+    return render_template('index.html', horoscope_text=horoscope_text,chat_history=chat_history)
+
+@app.route('/chat', methods=["POST"])
+def chat():
+    global chat_history
+
+    user_message = request.form["msg"]
+    chat_history.append({"sender": "user", "message": user_message})
+
+    try:
+        bot_response = agent.run(user_message)
+
+        if hasattr(bot_response, "content"):
+            bot_response_text = bot_response.content
+        else:
+            bot_response_text = str(bot_response)
+
+    except Exception as e:
+        bot_response_text = f"Error: {str(e)}"
+
+    chat_history.append({"sender": "bot", "message": bot_response_text})
+
+    return bot_response_text
+
+
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Use the PORT environment variable if set, otherwise default to 5000
+    port = int(os.environ.get("PORT", 5000))  
     app.run(host="0.0.0.0", port=port)
