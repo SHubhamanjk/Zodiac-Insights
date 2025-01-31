@@ -53,11 +53,6 @@ Many horoscope platforms either provide outdated or inconsistent data. Zudio Ins
    http://127.0.0.1:5000
    ```
 
-## 🚀 Future Enhancements
-🔹 Add user authentication for personalized daily horoscope tracking.  
-🔹 Integrate ML models for personalized horoscope recommendations.  
-🔹 Implement a chatbot for interactive astrology queries.  
-
 ## 📜 License
 This project is licensed under the MIT License. Feel free to use and modify it as needed.
 
