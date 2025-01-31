@@ -3,17 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zodiac Insights
-    </title>
+    <title>Zodiac Insights</title>
+    
+    <!-- Link to External CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     
+    <!-- jQuery (Required for toggle function) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
+
     <div class="container">
         <h1>Your Daily Stars</h1>
         <form method="post">
             <label for="date">Date of Reading</label>
             <input type="date" id="date" name="date" required><br>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const dateInput = document.getElementById("date");
+                    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+                    dateInput.value = today; // Set default value
+                });
+            </script>
             <label for="horoscope">Your Zodiac</label>
             <select id="horoscope" name="horoscope" required>
                 <option value="aries">Aries</option>
@@ -31,6 +43,7 @@
             </select><br>
             <button type="submit">Reveal My Stars</button>
         </form>
+        
         {% if horoscope_text %}
             <div class="result">
                 <h2>Your Horoscope</h2>
@@ -38,5 +51,93 @@
             </div>
         {% endif %}
     </div>
+
+    <!-- Chatbot UI -->
+    <div class="chatbot">
+        <div class="chatbot-icon" id="chatbot-icon">💬</div>
+        <div class="chatbot-content" id="chatbot-content">
+            <div class="chat-header">Chatbot</div>
+            <div class="chat-messages" id="chat-messages">
+                {% for chat in chat_history %}
+                <div class="chat-row {{ 'user-row' if chat['sender'] == 'user' else 'bot-row' }}">
+                    <div class="chat-icon">
+                        <img src="{{ url_for('static', filename='R.png') if chat['sender'] == 'user' else url_for('static', filename='OIP.jpeg') }}" alt="AI">
+                    </div>
+                    <div class="chat-message">
+                        <p>{{ chat['message'] }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <form id="chatbot-form">
+                <div class="chat-input">
+                    <input type="text" id="question-input" name="msg" placeholder="Type your message..." required>
+                    <button type="button" id="send-question">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        $(document).ready(function () {
+            const chatbotIcon = $('#chatbot-icon');
+            const chatbotContent = $('#chatbot-content');
+
+            // Toggle chat visibility
+            chatbotIcon.on('click', function () {
+                chatbotContent.toggleClass('visible');
+            });
+
+            // Handle sending a message
+            $('#send-question').on('click', function () {
+                const userMessage = $('#question-input').val();
+                if (!userMessage) return;
+
+                $('#chat-messages').append(`
+                    <div class="chat-row user-row">
+                        <div class="chat-icon">
+                            <img src="{{ url_for('static', filename='R.png') }}" alt="User">
+                        </div>
+                        <div class="chat-message">
+                            <p>${userMessage}</p>
+                        </div>
+                    </div>
+                `);
+                $('#question-input').val('');
+
+                $.ajax({
+                    url: '/chat',
+                    method: 'POST',
+                    data: { msg: userMessage },
+                    success: function (response) {
+                        $('#chat-messages').append(`
+                            <div class="chat-row bot-row">
+                                <div class="chat-icon">
+                                    <img src="{{ url_for('static', filename='OIP.jpeg') }}" alt="AI">
+                                </div>
+                                <div class="chat-message">
+                                    <p>${response}</p>
+                                </div>
+                            </div>
+                        `);
+                    },
+                    error: function () {
+                        $('#chat-messages').append(`
+                            <div class="chat-row bot-row">
+                                <div class="chat-icon">
+                                    <img src="{{ url_for('static', filename='OIP.jpeg') }}" alt="AI">
+                                </div>
+                                <div class="chat-message">
+                                    <p>Error: Unable to get response from the server.</p>
+                                </div>
+                            </div>
+                        `);
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>
