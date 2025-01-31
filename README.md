@@ -35,8 +35,8 @@ Many horoscope platforms either provide outdated or inconsistent data. Zudio Ins
 ## 📌 Installation & Setup
 1. Clone the repository:
    ```sh
-   git clone https://github.com/SHubhamanjk/Zodiac-Insights-Web-Scrapping-
-   cd Zodiac-Insights-Web-Scrapping-
+   git clone https://github.com/SHubhamanjk/Zodiac-Insights
+   cd Zodiac-Insights
    ```
 2. Create a virtual environment and install dependencies:
    ```sh
