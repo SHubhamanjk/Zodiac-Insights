@@ -58,9 +58,6 @@ Many horoscope platforms either provide outdated or inconsistent data. Zudio Ins
 🔹 Integrate ML models for personalized horoscope recommendations.  
 🔹 Implement a chatbot for interactive astrology queries.  
 
-## 🤝 Contributing
-Contributions are welcome! Feel free to **fork** this repository and submit a **pull request**. 😊
-
 ## 📜 License
 This project is licensed under the MIT License. Feel free to use and modify it as needed.
 
